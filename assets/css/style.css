@@ -1,0 +1,61 @@
+/* 基础样式：优雅、轻量、无依赖 */
+:root{
+  --bg:#fffaf7;
+  --text:#2b2b2b;
+  --muted:#6b6b6b;
+  --primary:#ff6b81;
+  --accent:#ffd6e0;
+  --card:#ffffff;
+  --shadow:0 10px 25px rgba(0,0,0,.07);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter, 'Noto Serif SC', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;line-height:1.6}
+.container{max-width:1000px;margin:0 auto;padding:0 20px}
+.section{padding:64px 0}
+h1,h2,h3{font-family:'Noto Serif SC', serif;margin:0 0 12px}
+h2{font-size:28px}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+
+/* 英雄区 */
+.hero{background:linear-gradient(135deg, var(--accent) 0%, #fff 60%);}
+.hero-inner{padding:84px 0;text-align:center}
+.hero h1{font-size:36px;margin-bottom:8px}
+.subtitle{font-size:16px;margin-bottom:24px}
+.btn{display:inline-block;padding:10px 18px;border-radius:999px;background:var(--primary);color:#fff;text-decoration:none;box-shadow:var(--shadow);border:none;cursor:pointer}
+.btn.outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn:hover{filter:brightness(.95)}
+
+/* 倒计时 */
+.countdown-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:12px}
+.cd-box{background:var(--card);border-radius:16px;padding:20px;text-align:center;box-shadow:var(--shadow)}
+.cd-box span{display:block;font-size:28px;font-weight:700}
+.cd-box label{font-size:12px;color:var(--muted)}
+.target-line{margin-top:8px;color:var(--muted)}
+
+/* 时间轴 */
+.timeline{list-style:none;padding:0;margin:24px 0;border-left:3px solid var(--accent)}
+.timeline li{position:relative;padding:0 0 20px 20px}
+.timeline time{font-size:13px;color:var(--muted)}
+.timeline h3{margin:4px 0 6px}
+.tl-dot{position:absolute;left:-8px;top:4px;width:14px;height:14px;background:var(--primary);border:3px solid #fff;border-radius:50%;box-shadow:var(--shadow)}
+
+/* 相册网格 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:12px}
+figure{margin:0;background:var(--card);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+figure img{width:100%;height:180px;object-fit:cover;display:block}
+figcaption{padding:10px 12px;color:var(--muted);font-size:13px}
+
+/* 彩蛋 */
+.secret-box{display:flex;gap:12px;margin-top:12px}
+.secret-box input{flex:1;padding:10px 12px;border:1px solid #e6e6e6;border-radius:10px}
+.secret-content{margin-top:12px}
+.secret-content img{width:100%;max-width:520px;border-radius:16px;box-shadow:var(--shadow)}
+
+/* 页脚 */
+.footer{padding:32px 0;background:#fff;border-top:1px solid #f3f3f3;text-align:center}
+
+@media (max-width:600px){
+  .hero h1{font-size:28px}
+  .countdown-grid{grid-template-columns:repeat(2,1fr)}
+}
