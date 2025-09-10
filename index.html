@@ -4,8 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>木宝宝&林宝宝的小窝</title>
-  <meta name="description" content="情侣纪念网站：视差大图、交错时间轴、相册灯箱、深浅色主题、回到顶部、相伴天数与周年倒计时" />
-  <!-- 只需这一个文件。需要大图时，把图片上传到 assets/img/ 目录并命名为：bg1.jpg / bg2.jpg / bg3.jpg / pic1~4.jpg / secret.jpg -->
+  <meta name="description" content="情侣纪念网站：视差大图、交错时间轴、深浅色主题、回到顶部、相伴天数与周年倒计时" />
   <style>
     :root{
       --bg:#fffaf7; --text:#222; --muted:#6b6b6b; --primary:#ff6b81; --card:#fff; --shadow:0 10px 30px rgba(0,0,0,.08)
@@ -31,7 +30,7 @@
     .nav nav a:hover{opacity:1}
     .theme{margin-left:8px;border:1px solid rgba(0,0,0,.1);background:transparent;border-radius:8px;padding:6px 10px;cursor:pointer}
 
-    /* 英雄区 + 视差（没有图片时用渐变作为兜底） */
+    /* 英雄区 + 视差 */
     .parallax{position:relative;background:#ddd;background-size:cover;background-position:center;background-attachment:fixed}
     .hero{min-height:72vh;display:grid;place-items:center;text-align:center;
       background-image: linear-gradient(135deg, rgba(255,214,224,.85), rgba(255,255,255,.85)), url('assets/img/bg1.jpg');}
@@ -66,25 +65,16 @@
       background-size:cover;background-position:center;background-attachment:fixed}
     .quote blockquote{font-size:28px;text-align:center;opacity:.95}
 
-    /* 相册 Masonry */
+    /* 相册 Masonry（改为纯图片，不可点击） */
     .masonry{column-count:4;column-gap:14px}
-    .item{break-inside:avoid;margin-bottom:14px;display:block;border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+    .item{break-inside:avoid;margin-bottom:14px;display:block;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);cursor:default}
     .item img{width:100%;height:auto;display:block;transition:transform .3s}
     .item:hover img{transform:scale(1.02)}
 
-    /* 灯箱 */
-    .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);display:grid;place-items:center}
-    #lb-close{position:absolute;top:18px;right:24px;color:#fff;font-size:28px;cursor:pointer}
-    #lb-img{max-width:90vw;max-height:85vh;border-radius:10px}
-
-    /* 彩蛋 */
-    .secret-box{display:flex;gap:12px;margin-top:12px}
-    .secret-box input{flex:1;padding:10px 12px;border:1px solid #e6e6e6;border-radius:10px;background:var(--card);color:var(--text)}
-    .secret-content{margin-top:12px}
-    .secret-content img{width:100%;max-width:520px;border-radius:16px;box-shadow:var(--shadow)}
+    /* 保险：彻底禁用/隐藏任何可能的灯罩 */
+    .lightbox, #lightbox { display:none !important; }
 
     .footer{padding:40px 0;text-align:center;border-top:1px solid rgba(0,0,0,.06)}
-
     #toTop{position:fixed;right:16px;bottom:16px;border:none;background:var(--primary);color:#fff;border-radius:50%;width:44px;height:44px;cursor:pointer;box-shadow:var(--shadow);display:none}
 
     /* 动画 */
@@ -160,12 +150,12 @@
   <section class="parallax mid"></section>
 
   <section id="gallery" class="container section">
-    <h2>相册（可点放大）</h2>
+    <h2>相册（纯图片，不放大）</h2>
     <div class="masonry">
-      <a href="assets/img/pic1.jpg" class="item"><img src="assets/img/pic1.jpg" alt="pic1" onerror="this.parentElement.style.display='none'" /></a>
-      <a href="assets/img/pic2.jpg" class="item"><img src="assets/img/pic2.jpg" alt="pic2" onerror="this.parentElement.style.display='none'" /></a>
-      <a href="assets/img/pic3.jpg" class="item"><img src="assets/img/pic3.jpg" alt="pic3" onerror="this.parentElement.style.display='none'" /></a>
-      <a href="assets/img/pic4.jpg" class="item"><img src="assets/img/pic4.jpg" alt="pic4" onerror="this.parentElement.style.display='none'" /></a>
+      <div class="item"><img src="assets/img/pic1.jpg" alt="pic1" onerror="this.parentElement.style.display='none'"></div>
+      <div class="item"><img src="assets/img/pic2.jpg" alt="pic2" onerror="this.parentElement.style.display='none'"></div>
+      <div class="item"><img src="assets/img/pic3.jpg" alt="pic3" onerror="this.parentElement.style.display='none'"></div>
+      <div class="item"><img src="assets/img/pic4.jpg" alt="pic4" onerror="this.parentElement.style.display='none'"></div>
     </div>
   </section>
 
@@ -177,7 +167,7 @@
       <button class="btn" id="secret-btn">解锁</button>
     </div>
     <div id="secret-content" class="secret-content" hidden>
-      <img src="assets/img/secret.jpg" alt="secret" onerror="this.style.display='none'" />
+      <img src="assets/img/secret.jpg" alt="secret" onerror="this.style.display='none'">
       <p>解锁啦！</p>
     </div>
   </section>
@@ -190,7 +180,6 @@
 
   <button id="toTop" title="返回顶部">↑</button>
 
-  <!-- 轻量 JS（内联，避免多文件麻烦） -->
   <script>
     const CONFIG = { startDate: '2022-09-10', anniversaryBase: '09-10', secretCode: '1096' };
 
@@ -208,38 +197,6 @@
       const cd = Math.max(0, daysBetween(todayStr, target.toISOString().slice(0,10)));
       document.getElementById('cd-days').textContent = cd;
     }
-
-   function initLightbox(){
-  const lb = document.getElementById('lightbox') || (()=> {
-    const d=document.createElement('div');
-    d.id='lightbox'; d.className='lightbox'; d.hidden=true;
-    d.innerHTML='<span id="lb-close">×</span><img id="lb-img" alt="">';
-    document.body.appendChild(d); return d;
-  })();
-  const lbImg = lb.querySelector('#lb-img');
-  const close = ()=> lb.hidden = true;
-
-  // Esc 关闭
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-  lb.querySelector('#lb-close').onclick = close;
-  lb.addEventListener('click', e => { if (e.target === lb) close(); });
-
-  // ✅ 只有图片加载成功才打开灯箱
-  const showIfOk = (src)=>{
-    const test = new Image();
-    test.onload  = ()=> { lbImg.src = src; lb.hidden = false; };
-    test.onerror = ()=> { alert('这张图片找不到：' + src); };
-    test.src = src;
-  };
-
-  document.querySelectorAll('#gallery .item').forEach(a=>{
-    a.addEventListener('click', e=>{
-      e.preventDefault();
-      showIfOk(a.href);
-    });
-  });
-}
-
 
     function initSecret(){
       document.getElementById('secret-btn').addEventListener('click',()=>{
@@ -264,9 +221,12 @@
       btn.onclick=()=>{ const t=document.documentElement.classList.contains('dark')?'light':'dark'; set(t); };
     }
 
-    // 初始化
     document.addEventListener('DOMContentLoaded',()=>{
-      updateStats(); initLightbox(); initSecret(); initScroll(); initTheme();
+      updateStats();            // ✅ 保留
+      /* initLightbox(); */     // ❌ 已移除：不再启用灯罩/放大
+      initSecret(); 
+      initScroll(); 
+      initTheme();
     });
   </script>
 </body>
