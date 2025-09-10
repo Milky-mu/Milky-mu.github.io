@@ -32,7 +32,6 @@
 
     /* 视差区域 */
     .parallax{position:relative;background:#ddd;background-size:cover;background-position:center;background-attachment:fixed}
-    /* 提亮后的首页背景（把遮罩调到很淡） */
     .hero{
       min-height:72vh;display:grid;place-items:center;text-align:center;
       background-image:
@@ -82,9 +81,7 @@
 
     /* 保险：彻底禁用/隐藏任何可能的灯罩与覆盖层 */
     .lightbox, #lightbox, .overlay, .backdrop { display:none !important; }
-    /* 禁用相册点击 */
     #gallery .item{ pointer-events:none; }
-    /* 避免媒体/伪元素挡点击 */
     .hero video{ pointer-events:none; }
     .parallax::before,.parallax::after{ pointer-events:none; }
 
@@ -96,6 +93,9 @@
     .fade.show{opacity:1;transform:none}
     .delay{transition-delay:.15s}
     .delay2{transition-delay:.3s}
+
+    /* 让视频样式与图片协调 */
+    .secret-content video{width:100%;max-width:720px;border-radius:16px;box-shadow:var(--shadow)}
 
     @media (max-width:900px){
       .two-col{grid-template-columns:1fr}
@@ -173,6 +173,7 @@
     </div>
   </section>
 
+  <!-- 这里开始：小彩蛋（解锁后播放视频） -->
   <section id="secret" class="container section">
     <h2>小彩蛋</h2>
     <p class="muted">输入暗号解锁（默认 1096）</p>
@@ -180,11 +181,21 @@
       <input id="secret-input" placeholder="输入暗号">
       <button class="btn" id="secret-btn">解锁</button>
     </div>
+
     <div id="secret-content" class="secret-content" hidden>
-      <img src="assets/img/secret.jpg" alt="secret" onerror="this.style.display='none'">
-      <p>解锁啦！</p>
+      <video id="secret-video"
+             controls
+             preload="metadata"
+             playsinline
+             poster="assets/img/secret_poster.jpg"
+             style="width:100%;max-width:720px;border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.08);">
+        <source src="assets/video/secret.mp4" type="video/mp4">
+        你的浏览器不支持视频标签。
+      </video>
+      <p class="muted" id="secret-tip" style="margin-top:8px;">解锁成功！如果没有自动播放，点一下播放键哦～</p>
     </div>
   </section>
+  <!-- 小彩蛋结束 -->
 
   <footer class="footer">
     <div class="container">
@@ -212,11 +223,39 @@
       document.getElementById('cd-days').textContent = cd;
     }
 
+    // ✅ 新版：解锁后显示并播放视频
     function initSecret(){
-      document.getElementById('secret-btn').addEventListener('click',()=>{
-        const val=document.getElementById('secret-input').value.trim();
-        const box=document.getElementById('secret-content');
-        if(val===CONFIG.secretCode){ box.hidden=false; } else { alert('暗号不对，再试试 ;)'); }
+      const btn = document.getElementById('secret-btn');
+      const input = document.getElementById('secret-input');
+      const box = document.getElementById('secret-content');
+
+      btn.addEventListener('click', async ()=>{
+        const val = (input.value || '').trim();
+        if (val !== CONFIG.secretCode) {
+          alert('暗号不对，再试试 ;)');
+          return;
+        }
+
+        // 显示视频区并尝试静音自动播放
+        box.hidden = false;
+        const v = document.getElementById('secret-video');
+        if (v) {
+          try {
+            v.currentTime = 0;
+            v.muted = true;       // 静音更容易自动播放（移动端策略）
+            await v.play();
+            const tip = document.getElementById('secret-tip');
+            if (tip) tip.textContent = '已自动播放（静音）。点播放器取消静音即可听到声音～';
+          } catch (e) {
+            console.warn('autoplay blocked:', e);
+          }
+
+          // 允许点击视频切换静音
+          v.addEventListener('click', ()=>{ v.muted = !v.muted; });
+        }
+
+        // 平滑滚动到视频
+        box.scrollIntoView({behavior:'smooth', block:'center'});
       });
     }
 
@@ -251,7 +290,6 @@
 
     document.addEventListener('DOMContentLoaded',()=>{
       updateStats();
-      // 不再启用灯罩/放大：没有 initLightbox()
       initSecret();
       initScroll();
       initTheme();
