@@ -30,10 +30,15 @@
     .nav nav a:hover{opacity:1}
     .theme{margin-left:8px;border:1px solid rgba(0,0,0,.1);background:transparent;border-radius:8px;padding:6px 10px;cursor:pointer}
 
-    /* 英雄区 + 视差 */
+    /* 视差区域 */
     .parallax{position:relative;background:#ddd;background-size:cover;background-position:center;background-attachment:fixed}
-    .hero{min-height:72vh;display:grid;place-items:center;text-align:center;
-      background-image: linear-gradient(135deg, rgba(255,214,224,.85), rgba(255,255,255,.85)), url('assets/img/bg1.jpg');}
+    /* 提亮后的首页背景（把遮罩调到很淡） */
+    .hero{
+      min-height:72vh;display:grid;place-items:center;text-align:center;
+      background-image:
+        linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.08)),
+        url('assets/img/bg1.jpg');
+    }
     .hero-inner{padding:90px 20px}
     .hero h1{font-size:42px;margin-bottom:8px}
     .btn{display:inline-block;margin-top:16px;padding:10px 18px;border-radius:999px;background:var(--primary);color:#fff;border:none;cursor:pointer;box-shadow:var(--shadow)}
@@ -59,20 +64,29 @@
     .tl-content{background:var(--card);border-radius:14px;box-shadow:var(--shadow);display:inline-block;padding:12px 16px}
     .tl-content time{color:var(--muted);font-size:12px}
 
-    /* 引言区（视差） */
-    .mid{min-height:42vh;display:grid;place-items:center;
-      background-image: linear-gradient(135deg, rgba(255,214,224,.75), rgba(255,255,255,.75)), url('assets/img/bg3.jpg');
-      background-size:cover;background-position:center;background-attachment:fixed}
+    /* 中段视差（调淡遮罩） */
+    .mid{
+      min-height:42vh;display:grid;place-items:center;
+      background-image:
+        linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.06)),
+        url('assets/img/bg3.jpg');
+      background-size:cover;background-position:center;background-attachment:fixed
+    }
     .quote blockquote{font-size:28px;text-align:center;opacity:.95}
 
-    /* 相册 Masonry（改为纯图片，不可点击） */
+    /* 相册 Masonry（纯图片，不可点击） */
     .masonry{column-count:4;column-gap:14px}
     .item{break-inside:avoid;margin-bottom:14px;display:block;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);cursor:default}
     .item img{width:100%;height:auto;display:block;transition:transform .3s}
     .item:hover img{transform:scale(1.02)}
 
-    /* 保险：彻底禁用/隐藏任何可能的灯罩 */
-    .lightbox, #lightbox { display:none !important; }
+    /* 保险：彻底禁用/隐藏任何可能的灯罩与覆盖层 */
+    .lightbox, #lightbox, .overlay, .backdrop { display:none !important; }
+    /* 禁用相册点击 */
+    #gallery .item{ pointer-events:none; }
+    /* 避免媒体/伪元素挡点击 */
+    .hero video{ pointer-events:none; }
+    .parallax::before,.parallax::after{ pointer-events:none; }
 
     .footer{padding:40px 0;text-align:center;border-top:1px solid rgba(0,0,0,.06)}
     #toTop{position:fixed;right:16px;bottom:16px;border:none;background:var(--primary);color:#fff;border-radius:50%;width:44px;height:44px;cursor:pointer;box-shadow:var(--shadow);display:none}
@@ -125,7 +139,7 @@
       </div>
     </div>
     <figure class="side-photo">
-      <img src="assets/img/bg2.jpg" alt="我们的照片" onerror="this.style.display='none'" />
+      <img src="assets/img/bg2.jpg" alt="我们的照片" onerror="this.style.display='none'"/>
     </figure>
   </section>
 
@@ -160,8 +174,8 @@
   </section>
 
   <section id="secret" class="container section">
-    <h2>一个小彩蛋！</h2>
-    <p class="muted">输入暗号解锁喔</p>
+    <h2>小彩蛋</h2>
+    <p class="muted">输入暗号解锁（默认 1096）</p>
     <div class="secret-box">
       <input id="secret-input" placeholder="输入暗号">
       <button class="btn" id="secret-btn">解锁</button>
@@ -221,11 +235,25 @@
       btn.onclick=()=>{ const t=document.documentElement.classList.contains('dark')?'light':'dark'; set(t); };
     }
 
+    // 急救：移除任何可能的遮罩/覆盖层，恢复点击
+    document.addEventListener('DOMContentLoaded', () => {
+      ['#lightbox','.lightbox','.overlay','.backdrop'].forEach(sel=>{
+        document.querySelectorAll(sel).forEach(el=>el.remove());
+      });
+      Array.from(document.body.children).forEach(el=>{
+        const r=el.getBoundingClientRect(); const z=+getComputedStyle(el).zIndex||0;
+        if((el.style.position==='fixed'||getComputedStyle(el).position==='fixed') &&
+           r.width>=innerWidth*0.98 && r.height>=innerHeight*0.98 && z>=10){
+          el.remove();
+        }
+      });
+    });
+
     document.addEventListener('DOMContentLoaded',()=>{
-      updateStats();            // ✅ 保留
-      /* initLightbox(); */     // ❌ 已移除：不再启用灯罩/放大
-      initSecret(); 
-      initScroll(); 
+      updateStats();
+      // 不再启用灯罩/放大：没有 initLightbox()
+      initSecret();
+      initScroll();
       initTheme();
     });
   </script>
